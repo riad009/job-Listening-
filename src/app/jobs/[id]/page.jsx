@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function JobDetailPage({ params }) {
-  const { id } = use(params);
+export default function JobDetailPage() {
+  const params = useParams();
+  const id = params.id;
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,7 +27,7 @@ export default function JobDetailPage({ params }) {
         // Fetch related jobs
         const relatedRes = await fetch(`/api/jobs?category=${data.job.category}&limit=3`);
         const relatedData = await relatedRes.json();
-        setRelatedJobs(relatedData.jobs.filter(j => j.id !== parseInt(id)).slice(0, 3));
+        setRelatedJobs(relatedData.jobs.filter(j => String(j.id) !== String(id)).slice(0, 3));
       } catch (err) {
         setError('Job not found');
       } finally {
